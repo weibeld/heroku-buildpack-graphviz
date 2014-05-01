@@ -1,0 +1,59 @@
+#!/bin/bash
+# ------------------------------------------------------------------------------
+# Called by the build process (slug compiler): 
+#       compile <BUILD_DIR> <CACHE_DIR> <ENV_DIR>
+# ------------------------------------------------------------------------------
+# This executes in a special build environment where:
+# /app                          is the slug compiler
+# /tmp/build_<hash> (BUILD_DIR) contains the source code of our application,
+#                               and is going to be the slug of our app
+# ------------------------------------------------------------------------------
+# Summary: Downloads the Debian package 'graphviz' and all its dependent
+# packages, and installs them manually in our application slug.
+# ------------------------------------------------------------------------------
+
+# Exit whole script if any command returns a non-zero status (i.e. error)
+set -e
+
+# Holds our application source cde
+BUILD_DIR=$1    # /tmp/build_<hash> (subject to change...)
+
+# Location, relative to app root, where we want to install Graphviz to
+INSTALL_DIR=-vendor/graphviz
+mkdir -p $BUILD_DIR/$INSTALL_DIR
+
+# Creation of a custom apt environment. We have to do this, because we don't
+# have write permissions for the default apt environment. We intentionally do
+# it in an ephemeral location and not in the cache for keeping the cache small.
+APT=$HOME/apt   # HOME=/app in the build environment
+mkdir -p $APT/cache/archives/partial
+mkdir -p $APT/state/lists/partial
+
+# apt-get options required by our custom apt environment
+OPTIONS="-o debug::nolocking=true -o dir::cache=$APT/cache -o dir::state=$APT/state"
+
+# The mandatory apt-get update
+echo "-----> Updating Debian package lists (apt-get update)"
+apt-get $OPTIONS update >/dev/null 2>&1
+
+# Download Graphviz package and its dependencies. The downloaded packages go to
+# $APT/cache/archives. The exact Graphviz version is determined by the version
+# in the 'graphviz' Debian package for the Linux version running on Heroku.
+echo "-----> Downloading Graphviz package and dependencies"
+apt-get $OPTIONS --download-only --assume-yes install graphviz >/dev/null 2>&1
+
+# Manual installation of the Graphviz package and its dependencies. This means
+# basically extracting all the packages to our installation directory.
+echo "-----> Installing Graphviz package and dependencies"
+cd $APT/cache/archives
+for PKG in $(ls *.deb); do
+    dpkg -x $PKG $BUILD_DIR/$INSTALL_DIR
+done
+
+# Add Graphviz to the runtime environment's PATH. Scripts in .profile.d/ are
+# sourced when the dyno running our application starts up.
+cd $BUILD_DIR
+mkdir -p .profile.d
+echo "PATH=\$HOME/$INSTALL_DIR/usr/bin:\$PATH" >.profile.d/graphviz.sh
+
+exit 0
