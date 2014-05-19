@@ -19,7 +19,7 @@ set -e
 BUILD_DIR=$1    # /tmp/build_<hash> (subject to change...)
 
 # Location, relative to app root, where we want to install Graphviz to
-INSTALL_DIR=-vendor/graphviz
+INSTALL_DIR=vendor/graphviz
 mkdir -p $BUILD_DIR/$INSTALL_DIR
 
 # Creation of a custom apt environment. We have to do this, because we don't
