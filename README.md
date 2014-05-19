@@ -14,6 +14,7 @@ https://github.com/ddollar/heroku-buildpack-multi). For example, to add Graphviz
 
     $ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 
+    # Create file .buildpacks in root directory of your application
     $ cat .buildpacks
     https://github.com/heroku/heroku-buildpack-ruby.git
     https://github.com/weibeld/heroku-buildpack-graphviz-src.git
