@@ -23,6 +23,8 @@ https://github.com/ddollar/heroku-buildpack-multi). For example, to add Graphviz
 
 This incorporates the `graphviz` Debian package in your application release.
 
+In case your app requires an explicit excutable path, you can do so by (e.g. for `dot`):
+`heroku config:set GRAPHVIZ_DOT=/app/vendor/graphviz/usr/bin/dot`
 
 Relation with heroku-buildpack-graphviz-src
 -------------------------------------------
