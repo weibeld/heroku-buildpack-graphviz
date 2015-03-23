@@ -1,47 +1,63 @@
-Heroku Buildpack: Graphviz (-deb)
-=================================
+Heroku Buildpack: Graphviz
+===========================
 
 Install [Graphviz](http://www.graphviz.org/) on Heroku.
 
-Graphviz is installed as a Debian package.
+
+Description
+-----------
+
+This buildpack installs the Graphviz binaries to `/app/graphviz/bin`. The used Graphviz version is:
+
+* Graphviz 2.36.0 for stack Cedar-14
+* Graphviz 2.20.2 for stack Cedar *(deprecated stack)*
+
+The `/app/graphviz/bin` directory is added to the `PATH`. The variable `GRAPHVIZ_DOT` is set to `/app/graphviz/bin` (required by some tools, e.g. PlantUML).
+
+The binaries are taken from the official Ubuntu packages: <http://packages.ubuntu.com/trusty/graphviz> for Cedar-14 (Ubuntu 14.04 LTS), and <http://packages.ubuntu.com/lucid/graphviz> for Cedar (Ubuntu 10.04 LTS).
 
 
 Usage
 -----
 
-This buildpack is intended to be used in combination with other buildpacks by the means of [heroku-buildpack-multi](
-https://github.com/ddollar/heroku-buildpack-multi). For example, to add Graphviz support to a Ruby on Rails app:
+Simply do
 
-    $ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
+~~~bash
+heroku buildpack:set https://github.com/weibeld/heroku-buildpack-graphviz.git
+~~~
 
-    # Create file .buildpacks in root directory of your application
-    $ cat .buildpacks
-    https://github.com/heroku/heroku-buildpack-ruby.git
-    https://github.com/weibeld/heroku-buildpack-graphviz-src.git
+On the next `git push heroku master`, the Graphviz buildpack will be used.
 
-    $ git push heroku master
+For more information on how to use custom buildpacks, see <https://devcenter.heroku.com/articles/third-party-buildpacks#using-a-custom-buildpack>.
 
-This incorporates the `graphviz` Debian package in your application release.
 
-In case your app requires an explicit excutable path, you can do so by (e.g. for `dot`):
-`heroku config:set GRAPHVIZ_DOT=/app/vendor/graphviz/usr/bin/dot`
+Usage together with other buildpacks
+------------------------------------
 
-Relation with heroku-buildpack-graphviz-src
--------------------------------------------
+To use multiple buildpacks, you can use [heroku-buildpack-multi](
+https://github.com/ddollar/heroku-buildpack-multi):
 
-There's a related buildpack [heroku-buildpack-graphviz-src](https://github.com/weibeld/heroku-buildpack-graphviz-src). It differs in that it installs Graphviz not as a Debian package, but from the source code.
+~~~bash
+# Create file .buildpacks in app root, listing the buildpacks you want to use
+cat <<EOF >.buildpacks
+https://github.com/heroku/heroku-buildpack-ruby.git
+https://github.com/weibeld/heroku-buildpack-graphviz.git
+EOF
 
-Pro/contra -deb &#8594; -src
--------------------------------------
+heroku buildpack:set https://github.com/ddollar/heroku-buildpack-multi.git
+~~~
 
-Pro:
-* Fully functional, all output formats are available
+On the next `git push heroku master`, all the buildpacks listed in `.buildpacks` will be used.
 
-Contra:
-* Old Graphviz version
-  * Currently, version 2.20.2 from 2008 (see [http://www.graphviz.org/pub/graphviz/stable/SOURCES/](http://www.graphviz.org/pub/graphviz/stable/SOURCES/) and [http://packages.ubuntu.com/lucid/graphviz](http://packages.ubuntu.com/lucid/graphviz)). This is the version in the `graphviz` package for Ubuntu 10.04 LTS (Lucid Lynx), which is currently running on Heroku.
-  * However, assuming that Heroku will upgrade soon to Ubuntu 14.04 LTS, this "problem" will resolve itself in the near future.
-* Generally less flexibility with Graphviz versions
+
+Verification
+------------
+
+You can verify the installation of Graphviz with
+
+~~~bash
+heroku run dot -V
+~~~
 
 
 License
