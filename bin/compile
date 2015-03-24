@@ -57,12 +57,13 @@ dpkg -x "$d"/pkg.deb "$d"
 mkdir -p "$1"/graphviz/bin
 mv "$d"/usr/bin/* "$1"/graphviz/bin
 
-# .profile.d script for adding Graphviz binaries to PATH. (The GRAPHVIZ_DOT
-# variable is needed by some tools, e.g. PlantUML.)
+# .profile.d script adding /app/graphviz/bin to PATH and setting GRAPHVIZ_DOT
+# (scripts in .profile.d are sourced at dyno startup)
 mkdir -p "$1"/.profile.d
 cat <<'EOF' >"$1"/.profile.d/graphviz.sh
-PATH=$PATH:/app/graphviz/bin
+PATH=/app/graphviz/bin:$PATH
 export GRAPHVIZ_DOT=/app/graphviz/bin
 EOF
 
 echo "Graphviz binaries in /app/graphviz/bin and added to PATH" | a
+echo
