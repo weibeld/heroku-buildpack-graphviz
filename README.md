@@ -23,7 +23,7 @@ Usage
 Simply do
 
 ~~~bash
-heroku buildpack:set https://github.com/weibeld/heroku-buildpack-graphviz.git
+heroku buildpacks:set https://github.com/weibeld/heroku-buildpack-graphviz.git
 ~~~
 
 On the next `git push heroku master`, the Graphviz buildpack will be used.
@@ -44,7 +44,7 @@ https://github.com/heroku/heroku-buildpack-ruby.git
 https://github.com/weibeld/heroku-buildpack-graphviz.git
 EOF
 
-heroku buildpack:set https://github.com/ddollar/heroku-buildpack-multi.git
+heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi.git
 ~~~
 
 On the next `git push heroku master`, all the buildpacks listed in `.buildpacks` will be used.
