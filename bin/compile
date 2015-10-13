@@ -62,7 +62,7 @@ mv "$d"/usr/bin/* "$1"/graphviz/bin
 mkdir -p "$1"/.profile.d
 cat <<'EOF' >"$1"/.profile.d/graphviz.sh
 PATH=/app/graphviz/bin:$PATH
-export GRAPHVIZ_DOT=/app/graphviz/bin
+export GRAPHVIZ_DOT=/app/graphviz/bin/dot
 EOF
 
 echo "Graphviz binaries in /app/graphviz/bin and added to PATH" | a
