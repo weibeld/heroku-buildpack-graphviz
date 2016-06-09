@@ -34,20 +34,14 @@ For more information on how to use custom buildpacks, see <https://devcenter.her
 Usage together with other buildpacks
 ------------------------------------
 
-To use multiple buildpacks, you can use [heroku-buildpack-multi](
-https://github.com/ddollar/heroku-buildpack-multi):
+You can add multiple buildpacks [as described here](
+https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app):
 
 ~~~bash
-# Create file .buildpacks in app root, listing the buildpacks you want to use
-cat <<EOF >.buildpacks
-https://github.com/heroku/heroku-buildpack-ruby.git
-https://github.com/weibeld/heroku-buildpack-graphviz.git
-EOF
+heroku buildpacks:set heroku/ruby
 
-heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi.git
+heroku buildpacks:add --index 1 https://github.com/ddollar/heroku-buildpack-multi.git
 ~~~
-
-On the next `git push heroku master`, all the buildpacks listed in `.buildpacks` will be used.
 
 
 Verification
