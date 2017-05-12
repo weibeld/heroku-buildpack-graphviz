@@ -1,19 +1,17 @@
 #!/usr/bin/env bash
 #
 # Install Graphviz binaries to /app/graphviz/bin. The binaries are taken from
-# the official Ubuntu Debian Graphviz package for either Ubuntu 10.04 (if stack
-# is cedar) or Ubuntu 14.04 (if stack is cedar-14).
+# the official Ubuntu Debian Graphviz package.
 #
-# The Ubuntu versions of both stacks already contain all the dependencies for
-# the Graphviz package (*), so it's safe to install it without apt-get.
-#
-# (*) Ubuntu 10.04 doesn't contain the libxaw7 and libxmu6 dependencies, but
-# they are used for X11 which anyway cannot be used on Heroku.
+# The Ubuntu versions for both Heroku stacks already contain the dependencies
+# for the Graphviz package, so it's safe to install it without apt-get.
 #
 # Notes:
-# Check package deps: apt-cache depends graphviz
-# Package websites:   http://packages.ubuntu.com/trusty/graphviz   (14.04)
-#                     http://packages.ubuntu.com/lucid/graphviz    (10.04)
+#
+# - Check package dependencies: apt-cache depends graphviz
+# - Package websites:
+#     - http://packages.ubuntu.com/xenial/graphviz (Ubuntu 16.04)
+#     - http://packages.ubuntu.com/trusty/graphviz (Ubuntu 14.04)
 #
 # ---
 #
@@ -32,22 +30,16 @@ set -e
 a() { sed 's/^/-----> /'; }
 i() { sed 's/^/       /'; }
 
+# Note: find out download URL with: apt-cache show graphviz | grep Filename
 case "$STACK" in
   heroku-16)
     echo "Installing Graphviz version 2.38.0" | a
     echo "(Ubuntu package graphviz_2.38.0-12ubuntu2.1_amd64.deb)" | i
-    # URL can be found out with: apt-cache show graphviz | grep Filename
     url='http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/graphviz_2.38.0-12ubuntu2.1_amd64.deb' ;;
   cedar-14)
     echo "Installing Graphviz version 2.36.0" | a
     echo "(Ubuntu package graphviz_2.36.0-0ubuntu3.1_amd64.deb)" | i
-    # URL can be found out with: apt-cache show graphviz | grep Filename
     url='http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/graphviz_2.36.0-0ubuntu3.1_amd64.deb' ;;
-  cedar)
-    echo "Installing Graphviz version 2.20.2" | a
-    echo "(Ubuntu package graphviz_2.20.2-8ubuntu3.2_amd64.deb)" | i
-    # URL can be found out with: apt-cache show graphviz | grep Filename
-    url='http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/graphviz_2.20.2-8ubuntu3.2_amd64.deb' ;;
   *)
     echo "Buildpack error: unsupported stack: $STACK" | a
     exit 1 ;;
