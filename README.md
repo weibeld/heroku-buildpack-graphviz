@@ -9,19 +9,19 @@ Description
 
 This buildpack installs the Graphviz binaries to `/app/graphviz/bin`. The used Graphviz version is:
 
-* Graphviz 2.38.0 for stack Heroku-16
-* Graphviz 2.36.0 for stack Cedar-14
-* Graphviz 2.20.2 for stack Cedar *(deprecated stack)*
+* Graphviz 2.38.0 for the Heroku-16 stack (Ubuntu 16.04 LTS)
+* Graphviz 2.36.0 for the Cedar-14 stack (Ubuntu 14.04 LTS)
 
 The `/app/graphviz/bin` directory is added to the `PATH`. The variable `GRAPHVIZ_DOT` is set to `/app/graphviz/bin/dot` (required by some tools, e.g. PlantUML).
 
-The binaries are taken from the official Ubuntu packages: <http://packages.ubuntu.com/xenial/graphviz> for Heroku-16 (Ubuntu 16.04 LTS), <http://packages.ubuntu.com/trusty/graphviz> for Cedar-14 (Ubuntu 14.04 LTS), and <http://packages.ubuntu.com/lucid/graphviz> for Cedar (Ubuntu 10.04 LTS).
+The binaries are taken from the official Ubuntu packages:
+
+- <http://packages.ubuntu.com/xenial/graphviz> for the Heroku-16 stack
+- <http://packages.ubuntu.com/trusty/graphviz> for the Cedar-14 stack
 
 
 Usage
 -----
-
-Simply do:
 
 ~~~bash
 heroku buildpacks:set https://github.com/weibeld/heroku-buildpack-graphviz.git
@@ -29,21 +29,22 @@ heroku buildpacks:set https://github.com/weibeld/heroku-buildpack-graphviz.git
 
 On the next `git push heroku master`, the Graphviz buildpack will be used.
 
-For more information on how to use custom buildpacks, see <https://devcenter.heroku.com/articles/third-party-buildpacks#using-a-custom-buildpack>.
+See Heroku documentation [here](https://devcenter.heroku.com/articles/buildpacks#using-a-custom-buildpack)
 
 
 Usage together with other buildpacks
 ------------------------------------
 
-You can use multiple buildpacks at the same time as described on [https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app](
-https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app):
+To use this buildpack along with other buildpacks:
 
 ~~~bash
-heroku buildpacks:add --index 1 heroku/ruby
-heroku buildpacks:add --index 2 https://github.com/weibeld/heroku-buildpack-graphviz.git
+heroku buildpacks:add heroku/ruby
+heroku buildpacks:add https://github.com/weibeld/heroku-buildpack-graphviz.git
 ~~~
 
-You can always check which buildpacks you have currently added to your app with:
+See Heroku docmentation [here](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app)
+
+You can always check which buildpacks are currently set with:
 
 ~~~bash
 heroku buildpacks
@@ -53,7 +54,7 @@ heroku buildpacks
 Verification
 ------------
 
-Verify the installation of Graphviz on Heroku with:
+Verify the installation of Graphviz with:
 
 ~~~bash
 heroku run dot -V
