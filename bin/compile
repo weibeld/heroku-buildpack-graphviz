@@ -33,6 +33,11 @@ a() { sed 's/^/-----> /'; }
 i() { sed 's/^/       /'; }
 
 case "$STACK" in
+  heroku-16)
+    echo "Installing Graphviz version 2.38.0" | a
+    echo "(Ubuntu package graphviz_2.38.0-12ubuntu2.1_amd64.deb)" | i
+    # URL can be found out with: apt-cache show graphviz | grep Filename
+    url='http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/graphviz_2.38.0-12ubuntu2.1_amd64.deb' ;;
   cedar-14)
     echo "Installing Graphviz version 2.36.0" | a
     echo "(Ubuntu package graphviz_2.36.0-0ubuntu3.1_amd64.deb)" | i
