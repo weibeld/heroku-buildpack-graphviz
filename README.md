@@ -9,8 +9,8 @@ Description
 
 This buildpack installs the Graphviz binaries to `/app/graphviz/bin`. The used Graphviz version is:
 
-- **Graphviz 2.38.0** for the **Heroku-16** stack (Ubuntu 16.04 LTS)
-- **Graphviz 2.36.0** for the **Cedar-14** stack (Ubuntu 14.04 LTS)
+- **Graphviz 2.38.0** for stack **Heroku-16** (Ubuntu 16.04 LTS)
+- **Graphviz 2.36.0** for stack **Cedar-14** (Ubuntu 14.04 LTS)
 
 The directory `/app/graphviz/bin` is added to the `PATH`. Furthermore, the buildpack sets the environment variable `GRAPHVIZ_DOT` to `/app/graphviz/bin/dot` (required by some tools, e.g. PlantUML).
 
