@@ -3,8 +3,9 @@
 # Install Graphviz binaries to /app/graphviz/bin. The binaries are taken from
 # the official Ubuntu Debian Graphviz package.
 #
-# The Ubuntu versions for both Heroku stacks already contain the dependencies
-# for the Graphviz package, so it's safe to install it without apt-get.
+# Both current Heroku stacks (Heroku-16 with Ubuntu 16.04 and Cedar-14 with
+# Ubuntu 14.04) contain all the dependencies for Graphviz, so it's safe to
+# install the Graphviz package without apt-get.
 #
 # Notes:
 #
@@ -61,7 +62,7 @@ dpkg -x "$d/pkg.deb" "$d"
 mkdir -p "$1/graphviz/bin"
 mv "$d"/usr/bin/* "$1/graphviz/bin"
 
-# Set up environment in .profile.d script (sourced at every dyno startup)
+# Set up environment in .profile.d script (sourced at each dyno startup)
 mkdir -p "$1/.profile.d"
 cat <<'EOF' >"$1/.profile.d/graphviz.sh"
 PATH=/app/graphviz/bin:$PATH
