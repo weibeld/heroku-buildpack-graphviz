@@ -7,17 +7,14 @@ Install [Graphviz](http://www.graphviz.org/) on Heroku.
 Description
 -----------
 
-This buildpack installs the Graphviz binaries to `/app/graphviz/bin`. The used Graphviz version is:
+This buildpack installs Graphviz to your application slug.
 
-- **Graphviz 2.38.0** for stack **Heroku-16** (Ubuntu 16.04 LTS)
-- **Graphviz 2.36.0** for stack **Cedar-14** (Ubuntu 14.04 LTS)
+The installed Graphviz versions are:
 
-The directory `/app/graphviz/bin` is added to the `PATH`. Furthermore, the buildpack sets the environment variable `GRAPHVIZ_DOT` to `/app/graphviz/bin/dot` (required by some tools, e.g. PlantUML).
+- **Graphviz 2.38.0** for **Heroku-16** (package [`graphviz_2.38.0-12ubuntu2_amd64.deb`](https://packages.ubuntu.com/xenial/graphviz))
+- **Graphviz 2.36.0** for **Cedar-14** (package [`graphviz_2.36.0-0ubuntu3.1_amd64.deb`](https://packages.ubuntu.com/trusty/graphviz))
 
-The binaries are taken from the official Ubuntu packages:
-
-- <http://packages.ubuntu.com/xenial/graphviz> for Heroku-16
-- <http://packages.ubuntu.com/trusty/graphviz> for Cedar-14 
+The Graphviz packages are installed under the `/app/heroku-buildpack-graphviz` directory, and the Graphviz executables are located in `/app/heroku-buildpack-graphviz/usr/bin`. The latter directory is added to the `PATH`.
 
 
 Usage
