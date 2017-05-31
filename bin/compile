@@ -70,6 +70,13 @@ for p in "${packages[@]}"; do
   install "$base_url/$p" "$1/$install_dir"
 done
 
+# Create file config6a in $install_dir/usr/lib/graphviz listing enabled plugins.
+# In Cedar-14, an equivalent config6 file exists already in /usr/lib/graphviz.
+if [[ "$STACK" = heroku-16 ]]; then
+  export LD_LIBRARY_PATH=$1/$install_dir/usr/lib:$LD_LIBRARY_PATH
+  "$1/$install_dir"/usr/bin/dot -c
+fi
+
 # Create .profile.d script (which is sourced at each dyno startup)
 mkdir -p $1/.profile.d
 script=$1/.profile.d/graphviz.sh
