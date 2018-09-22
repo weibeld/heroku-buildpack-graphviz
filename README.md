@@ -11,6 +11,7 @@ This buildpack installs Graphviz to your application slug.
 
 The installed Graphviz versions are:
 
+- **Graphviz 2.40.1** for **Heroku-18** (package [`graphviz_2.40.1-2_amd64.deb`](https://packages.ubuntu.com/bionic/graphviz))
 - **Graphviz 2.38.0** for **Heroku-16** (package [`graphviz_2.38.0-12ubuntu2_amd64.deb`](https://packages.ubuntu.com/xenial/graphviz))
 - **Graphviz 2.36.0** for **Cedar-14** (package [`graphviz_2.36.0-0ubuntu3.1_amd64.deb`](https://packages.ubuntu.com/trusty/graphviz))
 
