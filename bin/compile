@@ -3,15 +3,19 @@
 # Install Grapvhiz Debian packages in the application slug (under directory
 # ./heroku-buildpack-graphviz).
 #
-# The installed Graphviz versions are 2.38.0 for Heroku-16 and 2.36.0 for
-# Cedar-14. For Heroku-16, additionally some dependencies in the form of
-# shared libraries must be installed. Cedar-14 already contains these dep-
-# endencies natively.
+# The installed Graphviz versions are:
+#  * 2.40.1 for Heroku-18
+#  * 2.38.0 for Heroku-16
+#  * 2.36.0 for Cedar-14
+# For Heroku-16 and Heroku-18, additionally some dependencies in the form
+# of shared libraries must be installed. Cedar-14 already contains these
+# dependencies natively.
 #
 # Notes:
 #
 # - Check package dependencies: apt-cache depends graphviz
 # - Package websites:
+#     - https://packages.ubuntu.com/bionic/graphviz (Ubuntu 18.04)
 #     - http://packages.ubuntu.com/xenial/graphviz (Ubuntu 16.04)
 #     - http://packages.ubuntu.com/trusty/graphviz (Ubuntu 14.04)
 #
@@ -40,19 +44,27 @@ install() {
 
 # Define required Debian packages for each Heroku stack. Cedar-14 already
 # contains all the dependencies for Graphviz, so only the Graphviz package
-# needs to be installed. Heroku-16 misses some dependencies in the form of
-# shared libraries, and they must be additonally installed.
+# needs to be installed. Heroku-16 and Heroku-18 misses some dependencies
+# in the form of shared libraries, and they must be additonally installed.
 case "$STACK" in
+  heroku-18)
+    graphviz_version="2.40.1"
+    packages=(universe/g/graphviz/graphviz_2.40.1-2_amd64.deb
+              universe/g/graphviz/libgvc6_2.40.1-2_amd64.deb
+              universe/g/graphviz/libcgraph6_2.40.1-2_amd64.deb
+              universe/g/graphviz/libcdt5_2.40.1-2_amd64.deb
+              universe/g/graphviz/libpathplan4_2.40.1-2_amd64.deb
+              universe/g/gts/libgts-0.7-5_0.7.6+darcs121130-4_amd64.deb) ;;
   heroku-16)
     graphviz_version="2.38.0"
-    packages=(graphviz_2.38.0-12ubuntu2_amd64.deb
-              libgvc6_2.38.0-12ubuntu2_amd64.deb
-              libcgraph6_2.38.0-12ubuntu2_amd64.deb
-              libcdt5_2.38.0-12ubuntu2_amd64.deb
-              libpathplan4_2.38.0-12ubuntu2_amd64.deb) ;;
+    packages=(main/g/graphviz/graphviz_2.38.0-12ubuntu2_amd64.deb
+              main/g/graphviz/libgvc6_2.38.0-12ubuntu2_amd64.deb
+              main/g/graphviz/libcgraph6_2.38.0-12ubuntu2_amd64.deb
+              main/g/graphviz/libcdt5_2.38.0-12ubuntu2_amd64.deb
+              main/g/graphviz/libpathplan4_2.38.0-12ubuntu2_amd64.deb) ;;
   cedar-14)
     graphviz_version="2.36.0"
-    packages=graphviz_2.36.0-0ubuntu3.1_amd64.deb ;;
+    packages=main/g/graphviz/graphviz_2.36.0-0ubuntu3.1_amd64.deb ;;
   *)
     echo "Buildpack error: unsupported stack $STACK" | a
     exit 1 ;;
@@ -63,7 +75,7 @@ install_dir=heroku-buildpack-graphviz
 mkdir -p "$1/$install_dir"
 
 # This URL can be found out with: apt-cache show graphviz | grep Filename
-base_url="http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz"
+base_url="http://archive.ubuntu.com/ubuntu/pool"
 echo "Installing the following packages:" | a
 for p in "${packages[@]}"; do
   echo "    * $p" | i
@@ -72,8 +84,8 @@ done
 
 # Create file config6a in $install_dir/usr/lib/graphviz listing enabled plugins.
 # In Cedar-14, an equivalent config6 file exists already in /usr/lib/graphviz.
-if [[ "$STACK" = heroku-16 ]]; then
-  export LD_LIBRARY_PATH=$1/$install_dir/usr/lib:$LD_LIBRARY_PATH
+if [[ "$STACK" = heroku-16 || "$STACK" = heroku-18 ]]; then
+  export LD_LIBRARY_PATH=$1/$install_dir/usr/lib:$1/$install_dir/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
   "$1/$install_dir"/usr/bin/dot -c
 fi
 
@@ -85,7 +97,7 @@ echo "PATH=/app/$install_dir/usr/bin:\$PATH" >"$script"
 echo "export GRAPHVIZ_DOT=/app/$install_dir/usr/bin/dot" >>"$script"
 # If shared libraries were installed (necessary on Heroku-16), set load path
 ((${#packages[@]} > 1)) &&
-  echo "export LD_LIBRARY_PATH=/app/$install_dir/usr/lib:\$LD_LIBRARY_PATH" >>"$script"
+  echo "export LD_LIBRARY_PATH=/app/$install_dir/usr/lib:/app/$install_dir/usr/lib/x86_64-linux-gnu/:\$LD_LIBRARY_PATH" >>"$script"
 
 echo "Successfully installed Graphviz $graphviz_version" | a
 echo "Verify installation with \"heroku run dot -V\"" | i
