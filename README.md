@@ -13,7 +13,6 @@ The installed Graphviz versions are:
 
 - **Graphviz 2.40.1** for **Heroku-18** (package [`graphviz_2.40.1-2_amd64.deb`](https://packages.ubuntu.com/bionic/graphviz))
 - **Graphviz 2.38.0** for **Heroku-16** (package [`graphviz_2.38.0-12ubuntu2_amd64.deb`](https://packages.ubuntu.com/xenial/graphviz))
-- **Graphviz 2.36.0** for **Cedar-14** (package [`graphviz_2.36.0-0ubuntu3.1_amd64.deb`](https://packages.ubuntu.com/trusty/graphviz))
 
 The Graphviz packages are installed under the `/app/heroku-buildpack-graphviz` directory, and the Graphviz executables are located in `/app/heroku-buildpack-graphviz/usr/bin`. The latter directory is added to the `PATH`.
 
@@ -31,7 +30,7 @@ See Heroku documentation [here](https://devcenter.heroku.com/articles/buildpacks
 Usage together with other buildpacks
 ------------------------------------
 
-To use this buildpack along with other buildpacks:
+To use this buildpack together with other buildpacks, use for example:
 
 ~~~bash
 heroku buildpacks:add heroku/ruby
@@ -55,6 +54,17 @@ Verify the installation of Graphviz with:
 ~~~bash
 heroku run dot -V
 ~~~
+
+Testing
+-------
+
+For development purposes, you can test the buildpack locally with the [test.sh](test.sh) script:
+
+~~~bash
+./test.sh
+~~~
+
+This runs the buildpack script in a local [Docker container](https://hub.docker.com/r/heroku/heroku/) of the Heroku-18 and Heroku-16 stacks.
 
 
 License

@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 #
 # The 'detect' script is executed by the slug compiler with one argument:
-#   1. build_dir: location of your app directory on the build dyno
+#   $1: directory holding your app's code (will be /app in production)
+#
+# Build behaviour:
 #
 # If 'detect' exits with status code 0:
-#   stdout is inserted in "-----> <X> app detected" and 'compile' script is run
-# If 'detect' exits with status code != 0:
-#   the buildpack is not used
+#   - Print "-----> <X> app detected", <X> being the output of 'detect' script
+#   - Run the 'compile' script
+# Else:
+#   - The buildpack is not used
 #
 # More information here: https://devcenter.heroku.com/articles/buildpack-api
-#
-# Daniel Weibel <daniel.weibel@unifr.ch> March 2015
 #------------------------------------------------------------------------------#
 
 echo "Graphviz"
