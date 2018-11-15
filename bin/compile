@@ -59,10 +59,12 @@ case "$STACK" in
     exit 1 ;;
 esac
 
+echo "Detected stack $STACK, using Graphviz version $graphviz_version" | a
+
+# Install
 install_dir=heroku-buildpack-graphviz
 mkdir -p "$1"/$install_dir
-
-# Install (base URL: 'apt-cache show graphviz | grep Filename')
+# Base URL: 'apt-cache show graphviz | grep Filename')
 base_url="http://archive.ubuntu.com/ubuntu/pool"
 echo "Installing the following packages:" | a
 for p in "${packages[@]}"; do
