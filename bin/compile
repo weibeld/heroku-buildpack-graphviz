@@ -3,13 +3,10 @@
 # Install Grapvhiz Debian packages in the application slug (under directory
 # ./heroku-buildpack-graphviz).
 #
-# The installed Graphviz versions are:
-#  * 2.40.1 for Heroku-18
-#  * 2.38.0 for Heroku-16
-#  * 2.36.0 for Cedar-14
-# For Heroku-16 and Heroku-18, additionally some dependencies in the form
-# of shared libraries must be installed. Cedar-14 already contains these
-# dependencies natively.
+# The installed Graphviz versions for the two supported Heroku stacks are:
+#
+#  * Heroku-18: Graphviz v2.40.1 
+#  * Heroku-16: Graphviz v2.38.0 
 #
 # Notes:
 #
@@ -17,18 +14,16 @@
 # - Package websites:
 #     - https://packages.ubuntu.com/bionic/graphviz (Ubuntu 18.04)
 #     - http://packages.ubuntu.com/xenial/graphviz (Ubuntu 16.04)
-#     - http://packages.ubuntu.com/trusty/graphviz (Ubuntu 14.04)
 #
 # ---
 #
-# The 'compile' script is executed by the slug compiler with three arguments:
-#   1. build_dir: location of your app directory on the build dyno
-#   2. cache_dir: directory on the build dyno that persists between builds
-#   3. env_dir:   directory holding all the app's config vars as files
+# The 'compile' script is invoked by the slug compiler with three arguments:
+#
+#   $1: directory holding your app's code (will be /app in production)
+#   $2: directory that persists between builds and can be used as a cache
+#   $3: directory holding all the app's config vars as files
 #
 # More information here: https://devcenter.heroku.com/articles/buildpack-api
-#
-# Daniel Weibel <danielmweibel@gmail.com> March 2015 - May 2017
 #------------------------------------------------------------------------------#
 
 set -e
@@ -42,10 +37,7 @@ install() {
   rm pkg.deb
 }
 
-# Define required Debian packages for each Heroku stack. Cedar-14 already
-# contains all the dependencies for Graphviz, so only the Graphviz package
-# needs to be installed. Heroku-16 and Heroku-18 misses some dependencies
-# in the form of shared libraries, and they must be additonally installed.
+# Required Debian packages for each Heroku stack
 case "$STACK" in
   heroku-18)
     graphviz_version="2.40.1"
@@ -62,19 +54,15 @@ case "$STACK" in
               main/g/graphviz/libcgraph6_2.38.0-12ubuntu2_amd64.deb
               main/g/graphviz/libcdt5_2.38.0-12ubuntu2_amd64.deb
               main/g/graphviz/libpathplan4_2.38.0-12ubuntu2_amd64.deb) ;;
-  cedar-14)
-    graphviz_version="2.36.0"
-    packages=main/g/graphviz/graphviz_2.36.0-0ubuntu3.1_amd64.deb ;;
   *)
     echo "Buildpack error: unsupported stack $STACK" | a
     exit 1 ;;
 esac
 
-# Location under which Graphviz binaries and dependencies will be installed
 install_dir=heroku-buildpack-graphviz
-mkdir -p "$1/$install_dir"
+mkdir -p "$1"/$install_dir
 
-# This URL can be found out with: apt-cache show graphviz | grep Filename
+# Install (base URL: 'apt-cache show graphviz | grep Filename')
 base_url="http://archive.ubuntu.com/ubuntu/pool"
 echo "Installing the following packages:" | a
 for p in "${packages[@]}"; do
@@ -82,22 +70,19 @@ for p in "${packages[@]}"; do
   install "$base_url/$p" "$1/$install_dir"
 done
 
-# Create file config6a in $install_dir/usr/lib/graphviz listing enabled plugins.
-# In Cedar-14, an equivalent config6 file exists already in /usr/lib/graphviz.
-if [[ "$STACK" = heroku-16 || "$STACK" = heroku-18 ]]; then
-  export LD_LIBRARY_PATH=$1/$install_dir/usr/lib:$1/$install_dir/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
-  "$1/$install_dir"/usr/bin/dot -c
-fi
+# Make Graphviz "executable" on the build dyno
+export LD_LIBRARY_PATH=$1/$install_dir/usr/lib:$1/$install_dir/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
+PATH=$1/$install_dir/usr/bin:$PATH
+# Configure plugins (create file $install_dir/usr/lib/graphviz/config6a)
+dot -c
 
-# Create .profile.d script (which is sourced at each dyno startup)
-mkdir -p $1/.profile.d
-script=$1/.profile.d/graphviz.sh
-echo "PATH=/app/$install_dir/usr/bin:\$PATH" >"$script"
-# The variable GRAPHVIZ_DOT is needed by some applications (e.g. PlantUML)
-echo "export GRAPHVIZ_DOT=/app/$install_dir/usr/bin/dot" >>"$script"
-# If shared libraries were installed (necessary on Heroku-16), set load path
-((${#packages[@]} > 1)) &&
-  echo "export LD_LIBRARY_PATH=/app/$install_dir/usr/lib:/app/$install_dir/usr/lib/x86_64-linux-gnu/:\$LD_LIBRARY_PATH" >>"$script"
+# Create .profile.d script (gets sourced at each dyno startup)
+mkdir -p "$1"/.profile.d
+cat <<EOF >"$1"/.profile.d/graphviz.sh
+PATH=/app/$install_dir/usr/bin:\$PATH
+export GRAPHVIZ_DOT=/app/$install_dir/usr/bin/dot
+export LD_LIBRARY_PATH=/app/$install_dir/usr/lib:/app/$install_dir/usr/lib/x86_64-linux-gnu/:\$LD_LIBRARY_PATH
+EOF
 
 echo "Successfully installed Graphviz $graphviz_version" | a
 echo "Verify installation with \"heroku run dot -V\"" | i
