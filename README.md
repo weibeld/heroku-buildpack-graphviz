@@ -21,7 +21,7 @@ Usage
 -----
 
 ~~~bash
-heroku buildpacks:set https://github.com/weibeld/heroku-buildpack-graphviz.git
+heroku buildpacks:set https://github.com/weibeld/heroku-buildpack-graphviz
 ~~~
 
 See Heroku documentation [here](https://devcenter.heroku.com/articles/buildpacks#using-a-custom-buildpack).

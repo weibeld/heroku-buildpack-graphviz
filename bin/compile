@@ -46,6 +46,7 @@ case "$STACK" in
               universe/g/graphviz/libcgraph6_2.40.1-2_amd64.deb
               universe/g/graphviz/libcdt5_2.40.1-2_amd64.deb
               universe/g/graphviz/libpathplan4_2.40.1-2_amd64.deb
+              universe/g/graphviz/libgvpr2_2.40.1-2_amd64.deb
               universe/g/gts/libgts-0.7-5_0.7.6+darcs121130-4_amd64.deb) ;;
   heroku-16)
     graphviz_version="2.38.0"
