@@ -54,7 +54,8 @@ case "$STACK" in
               main/g/graphviz/libgvc6_2.38.0-12ubuntu2_amd64.deb
               main/g/graphviz/libcgraph6_2.38.0-12ubuntu2_amd64.deb
               main/g/graphviz/libcdt5_2.38.0-12ubuntu2_amd64.deb
-              main/g/graphviz/libpathplan4_2.38.0-12ubuntu2_amd64.deb) ;;
+              main/g/graphviz/libpathplan4_2.38.0-12ubuntu2_amd64.deb
+              main/g/graphviz/libgvpr2_2.38.0-12ubuntu2_amd64.deb) ;;
   *)
     echo "Buildpack error: unsupported stack $STACK" | a
     exit 1 ;;
