@@ -2,15 +2,7 @@
 #
 # Install Grapvhiz binaries in the application slug.
 #
-# The installed Graphviz versions are Graphviz v2.40.1 for the Heroku-18 stack
-# (Ubuntu 18.04) and Graphviz v2.38.0  for the Heroku-16 stack (Ubuntu 16.04).
-#
-# Notes:
-#
-# - Check package dependencies: apt-cache depends graphviz
-# - Package websites:
-#     - https://packages.ubuntu.com/bionic/graphviz (Ubuntu 18.04)
-#     - http://packages.ubuntu.com/xenial/graphviz (Ubuntu 16.04)
+# See NOTES.md for explanations.
 #
 # ---
 #
@@ -30,28 +22,44 @@ i() { sed 's/^/       /'; }
 
 cd "$1"
 
-# Debian packages for Graphviz and its dependencies. The packages are installed 
-# manually instead of with APT to be able to freely chose the target directory.
+# URLs of the Ubuntu packages to install (see NOTES.md for how to obtain them)
 case "$STACK" in
   heroku-18)
     # See https://packages.ubuntu.com/bionic/graphviz
-    package_urls=(http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/graphviz_2.40.1-2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libgvc6_2.40.1-2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libcgraph6_2.40.1-2_amd64.deb
+    package_urls=(http://archive.ubuntu.com/ubuntu/pool/main/x/xorg/x11-common_7.7+19ubuntu7.1_all.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libi/libice/libice6_1.0.9-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libs/libsm/libsm6_1.2.2-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/f/fonts-liberation/fonts-liberation_1.07.4-7~18.04.1_all.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/a/ann/libann0_1.1.2+doc-6_amd64.deb
 http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libcdt5_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libcgraph6_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/gts/libgts-0.7-5_0.7.6+darcs121130-4_amd64.deb
 http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libpathplan4_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libgvc6_2.40.1-2_amd64.deb
 http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libgvpr2_2.40.1-2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/universe/g/gts/libgts-0.7-5_0.7.6+darcs121130-4_amd64.deb)
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/liblab-gamut1_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxt/libxt6_1.1.5-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxmu/libxmu6_1.1.2-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxaw/libxaw7_1.0.13-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/graphviz_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/gts/libgts-bin_0.7.6+darcs121130-4_amd64.deb)
     graphviz_version="2.40.1"
     ;;
   heroku-16)
     # See https://packages.ubuntu.com/xenial/graphviz
-    package_urls=(http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/graphviz_2.38.0-12ubuntu2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libcdt5_2.38.0-12ubuntu2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libcgraph6_2.38.0-12ubuntu2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libgvc6_2.38.0-12ubuntu2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libpathplan4_2.38.0-12ubuntu2_amd64.deb
-http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libgvpr2_2.38.0-12ubuntu2_amd64.deb)
+    package_urls=(http://archive.ubuntu.com/ubuntu/pool/main/x/xorg/x11-common_7.7+13ubuntu3.1_all.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libi/libice/libice6_1.0.9-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libs/libsm/libsm6_1.2.2-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/f/fonts-liberation/fonts-liberation_1.07.4-1_all.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libcdt5_2.38.0-12ubuntu2.1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libcgraph6_2.38.0-12ubuntu2.1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libpathplan4_2.38.0-12ubuntu2.1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libgvc6_2.38.0-12ubuntu2.1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libgvpr2_2.38.0-12ubuntu2.1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxt/libxt6_1.1.5-0ubuntu1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxmu/libxmu6_1.1.2-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxaw/libxaw7_1.0.13-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/graphviz_2.38.0-12ubuntu2.1_amd64.deb)
     graphviz_version="2.38.0"
     ;;
   *)
@@ -63,7 +71,7 @@ esac
 echo "Your app uses the $STACK stack" | a
 echo "Will install Graphviz version $graphviz_version" | i
 
-# Install Debian packages to custom directory in application slug
+# Install packages to custom directory in application slug
 echo "Installing Debian packages:" | a
 install_dir=.heroku-buildpack-graphviz
 mkdir -p $install_dir
@@ -72,7 +80,7 @@ for u in "${package_urls[@]}"; do
   curl -s "$u" >pkg.deb && dpkg -x pkg.deb "$install_dir" && rm pkg.deb
 done
 
-# Installation location of shared libraries
+# Location of shared libraries
 case "$STACK" in
   heroku-16)
     libs_dir=$install_dir/usr/lib ;;
@@ -80,7 +88,7 @@ case "$STACK" in
     libs_dir=$install_dir/usr/lib/x86_64-linux-gnu ;;
 esac 
 
-# Create .profile.d script setting up PATH and LD_LIBRARY_PATH
+# Create .profile.d script (sourced by dyno) setting PATH and LD_LIBRARY_PATH
 mkdir -p .profile.d
 echo "PATH=/app/$install_dir/usr/bin:\$PATH" >.profile.d/graphviz.sh
 echo "export LD_LIBRARY_PATH=/app/$libs_dir:\$LD_LIBRARY_PATH" >>.profile.d/graphviz.sh
