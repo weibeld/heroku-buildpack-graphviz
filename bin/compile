@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 #
-# Install Grapvhiz Debian packages in the application slug (under directory
-# ./heroku-buildpack-graphviz).
+# Install Grapvhiz binaries in the application slug.
 #
-# The installed Graphviz versions for the two supported Heroku stacks are:
-#
-#  * Heroku-18: Graphviz v2.40.1 
-#  * Heroku-16: Graphviz v2.38.0 
+# The installed Graphviz versions are Graphviz v2.40.1 for the Heroku-18 stack
+# (Ubuntu 18.04) and Graphviz v2.38.0  for the Heroku-16 stack (Ubuntu 16.04).
 #
 # Notes:
 #
@@ -19,9 +16,9 @@
 #
 # The 'compile' script is invoked by the slug compiler with three arguments:
 #
-#   $1: directory holding your app's code (will be /app in production)
-#   $2: directory that persists between builds and can be used as a cache
-#   $3: directory holding all the app's config vars as files
+#   $1: build_dir, location of your app directory on the build dyno
+#   $2: cache_dir, directory on the build dyno that persists between builds
+#   $3: env_dir, directory holding all the app's config vars as files
 #
 # More information here: https://devcenter.heroku.com/articles/buildpack-api
 #------------------------------------------------------------------------------#
@@ -31,63 +28,66 @@ set -e
 a() { sed 's/^/-----> /'; }
 i() { sed 's/^/       /'; }
 
-install() {
-  curl -s "$1" >pkg.deb
-  dpkg -x pkg.deb "$2"
-  rm pkg.deb
-}
+cd "$1"
 
-# Required Debian packages for each Heroku stack
+# Debian packages for Graphviz and its dependencies. The packages are installed 
+# manually instead of with APT to be able to freely chose the target directory.
 case "$STACK" in
   heroku-18)
+    # See https://packages.ubuntu.com/bionic/graphviz
+    package_urls=(http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/graphviz_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libgvc6_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libcgraph6_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libcdt5_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libpathplan4_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libgvpr2_2.40.1-2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/gts/libgts-0.7-5_0.7.6+darcs121130-4_amd64.deb)
     graphviz_version="2.40.1"
-    packages=(universe/g/graphviz/graphviz_2.40.1-2_amd64.deb
-              universe/g/graphviz/libgvc6_2.40.1-2_amd64.deb
-              universe/g/graphviz/libcgraph6_2.40.1-2_amd64.deb
-              universe/g/graphviz/libcdt5_2.40.1-2_amd64.deb
-              universe/g/graphviz/libpathplan4_2.40.1-2_amd64.deb
-              universe/g/graphviz/libgvpr2_2.40.1-2_amd64.deb
-              universe/g/gts/libgts-0.7-5_0.7.6+darcs121130-4_amd64.deb) ;;
+    ;;
   heroku-16)
+    # See https://packages.ubuntu.com/xenial/graphviz
+    package_urls=(http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/graphviz_2.38.0-12ubuntu2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libcdt5_2.38.0-12ubuntu2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libcgraph6_2.38.0-12ubuntu2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libgvc6_2.38.0-12ubuntu2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libpathplan4_2.38.0-12ubuntu2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/g/graphviz/libgvpr2_2.38.0-12ubuntu2_amd64.deb)
     graphviz_version="2.38.0"
-    packages=(main/g/graphviz/graphviz_2.38.0-12ubuntu2_amd64.deb
-              main/g/graphviz/libgvc6_2.38.0-12ubuntu2_amd64.deb
-              main/g/graphviz/libcgraph6_2.38.0-12ubuntu2_amd64.deb
-              main/g/graphviz/libcdt5_2.38.0-12ubuntu2_amd64.deb
-              main/g/graphviz/libpathplan4_2.38.0-12ubuntu2_amd64.deb
-              main/g/graphviz/libgvpr2_2.38.0-12ubuntu2_amd64.deb) ;;
+    ;;
   *)
-    echo "Buildpack error: unsupported stack $STACK" | a
-    exit 1 ;;
+    echo "Error: unknown Heroku stack: $STACK" | a
+    echo "Report on https://github.com/weibeld/heroku-buildpack-graphviz/issues" | i
+    exit 1
+    ;;
 esac
+echo "Your app uses the $STACK stack" | a
+echo "Will install Graphviz version $graphviz_version" | i
 
-echo "Detected stack $STACK, using Graphviz version $graphviz_version" | a
-
-# Install
-install_dir=heroku-buildpack-graphviz
-mkdir -p "$1"/$install_dir
-# Base URL: 'apt-cache show graphviz | grep Filename')
-base_url="http://archive.ubuntu.com/ubuntu/pool"
-echo "Installing the following packages:" | a
-for p in "${packages[@]}"; do
-  echo "    * $p" | i
-  install "$base_url/$p" "$1/$install_dir"
+# Install Debian packages to custom directory in application slug
+echo "Installing Debian packages:" | a
+install_dir=.heroku-buildpack-graphviz
+mkdir -p $install_dir
+for u in "${package_urls[@]}"; do
+  echo "  * ${u##*/}" | i
+  curl -s "$u" >pkg.deb && dpkg -x pkg.deb "$install_dir" && rm pkg.deb
 done
 
-# Make Graphviz "executable" on the build dyno
-export LD_LIBRARY_PATH=$1/$install_dir/usr/lib:$1/$install_dir/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
-PATH=$1/$install_dir/usr/bin:$PATH
-# Configure plugins (create file $install_dir/usr/lib/graphviz/config6a)
-dot -c
+# Installation location of shared libraries
+case "$STACK" in
+  heroku-16)
+    libs_dir=$install_dir/usr/lib ;;
+  heroku-18)
+    libs_dir=$install_dir/usr/lib/x86_64-linux-gnu ;;
+esac 
 
-# Create .profile.d script (gets sourced at each dyno startup)
-mkdir -p "$1"/.profile.d
-cat <<EOF >"$1"/.profile.d/graphviz.sh
-PATH=/app/$install_dir/usr/bin:\$PATH
-export GRAPHVIZ_DOT=/app/$install_dir/usr/bin/dot
-export LD_LIBRARY_PATH=/app/$install_dir/usr/lib:/app/$install_dir/usr/lib/x86_64-linux-gnu/:\$LD_LIBRARY_PATH
-EOF
+# Create .profile.d script setting up PATH and LD_LIBRARY_PATH
+mkdir -p .profile.d
+echo "PATH=/app/$install_dir/usr/bin:\$PATH" >.profile.d/graphviz.sh
+echo "export LD_LIBRARY_PATH=/app/$libs_dir:\$LD_LIBRARY_PATH" >>.profile.d/graphviz.sh
+
+# Run dot -c to configure plugins (creates config6a file)
+LD_LIBRARY_PATH=$libs_dir "$install_dir"/usr/bin/dot -c
 
 echo "Successfully installed Graphviz $graphviz_version" | a
-echo "Verify installation with \"heroku run dot -V\"" | i
+echo "The binaries are in /app/$install_dir/usr/bin" | i
 echo
