@@ -1,16 +1,20 @@
-# Implementation notes
+# Notes
 
-The aim is to install Graphviz with [Ubuntu packages](https://packages.ubuntu.com).
+## Installation method
 
-Usually, this could be done with `apt-get install graphviz`, however, in this case this doesn't work, because `apt-get` does not allow to install packages to a custom directory.
+The buildpack installs Graphviz by manually installing all the required [Ubuntu packages](https://packages.ubuntu.com) (Graphviz itself and its dependencies).
 
-However, for a Heroku build, a custom installation directory is necessary, because the packages must be installed to the application "slug" which will later by deployed to the dynos.
+Usually, one would just use `apt-get install graphviz`, however, this doesn't work here, because the packages need to be installed to a custom directory in the application slug (which will later be deployed to the production dynos), and it's not possible to configure this with `apt-get`.
 
-To work around this, the packages must be downloaded and installed manually with `dpkg`.
+To work around this, the buildpack downloads all the required packages and installs them manually with `dpkg`.
 
-## Get package URLs
+## Get the list of packages to install
 
-To get the URLs of all the packages that `apt-get install graphviz` would install on each Heroku stack, proceeds as follows:
+The required packages include not only [`graphviz`](https://packages.ubuntu.com/bionic/graphviz) but also all of its dependencies, and dependencies of dependencies, etc. Furthermore, some of the dependent packages might be already installed on the system, so they don't need to be installed.
+
+This can quickly get complicated, so the best way is to let `apt-get` figure out the concrete set of packages to install for a specific Heroku stack.
+
+To do so, run a specific Heroku stack as a Docker container:
 
 ```bash
 docker run --rm -it heroku/heroku:16
@@ -18,11 +22,48 @@ docker run --rm -it heroku/heroku:16
 docker run --rm -it heroku/heroku:18
 ```
 
-In the Docker container:
+> It seems that the build happens on the same stack that will also be used during production.
+
+Then, in the Docker container, run:
 
 ```bash
 apt-get update
 apt-get install -y --print-uris graphviz | grep http | awk '{print $1}' | tr -d "'"
 ```
 
-This list can then be hard-coded for every Heroku stack in the `bin/compile` script.
+This prints the list of packages (more precisely, their URLs) that `apt-get install graphviz` would install on this specific system.
+
+This list can then be used in the `bin/compile` script.
+
+By installing precisely these packages, the effect should be the same as if one would have run `apt-get install graphviz`.
+
+## Testing
+
+The buildpack can be tested in a Docker container running a specific Heroku stack.
+
+The `docker.sh` script allows to start such a Docker container:
+
+```bash
+docker.sh 16
+# or
+docker.sh 18
+```
+
+A volume mapping makes the current working directory (containing the buildpack) available under `/app` in the container. So, you can run the buildpack with:
+
+```bash
+cd /app
+bin/compile
+```
+
+You can then also source the `.profile.d` script to complete the setup:
+
+```bash
+. .profile.d/graphviz.sh
+```
+
+The `example.gv` file contains an example Graphviz graph which allows to test the Graphviz installation:
+
+```bash
+dot -Tpng example.gv >example.png
+```

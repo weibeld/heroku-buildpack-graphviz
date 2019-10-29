@@ -1,0 +1,3 @@
+digraph D {
+  A -> {B, C, D} -> {F}
+}
