@@ -8,8 +8,8 @@ This buildpack installs Graphviz on and makes it available to your Heroku applic
 
 The installed version of Graphviz is:
 
-- [**Graphviz 2.40.1**](https://packages.ubuntu.com/bionic/graphviz) for the [**Heroku-18**](https://devcenter.heroku.com/articles/heroku-18-stack) stack
-- [**Graphviz 2.38.0**](https://packages.ubuntu.com/xenial/graphviz) for the [**Heroku-16**](https://devcenter.heroku.com/articles/heroku-16-stack) stack
+- [**Graphviz 2.40.1**](https://packages.ubuntu.com/bionic/graphviz) for the [Heroku-18 stack](https://devcenter.heroku.com/articles/heroku-18-stack)
+- [**Graphviz 2.38.0**](https://packages.ubuntu.com/xenial/graphviz) for the [Heroku-16 stack](https://devcenter.heroku.com/articles/heroku-16-stack)
 
 The Graphviz executables are installed to the following directory (from where they are available to your app):
 
