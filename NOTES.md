@@ -8,7 +8,7 @@ Usually, one would just use `apt-get install graphviz`, however, this doesn't wo
 
 To work around this, the buildpack downloads all the required packages and installs them manually with `dpkg`.
 
-## Get the list of packages to install
+## Get list of packages
 
 The required packages include not only [`graphviz`](https://packages.ubuntu.com/bionic/graphviz) but also all of its dependencies, and dependencies of dependencies, etc. Furthermore, some of the dependent packages might be already installed on the system, so they don't need to be installed.
 
@@ -22,7 +22,7 @@ docker run --rm -it heroku/heroku:16
 docker run --rm -it heroku/heroku:18
 ```
 
-> It seems that the build happens on the same stack that will also be used during production.
+> The build happens on the same stack that will also be used during production.
 
 Then, in the Docker container, run:
 
@@ -33,9 +33,9 @@ apt-get install -y --print-uris graphviz | grep http | awk '{print $1}' | tr -d 
 
 This prints the list of packages (more precisely, their URLs) that `apt-get install graphviz` would install on this specific system.
 
-This list can then be used in the `bin/compile` script.
+This list can then be used in the `bin/compile` script for the corresponding Heroku stack.
 
-By installing precisely these packages, the effect should be the same as if one would have run `apt-get install graphviz`.
+By installing precisely this set of packages, as figured out by `apt-get`, the effect should be the same as running `apt-get install graphviz`.
 
 ## Testing
 
@@ -44,22 +44,24 @@ The buildpack can be tested in a Docker container running a specific Heroku stac
 The `docker.sh` script allows to start such a Docker container:
 
 ```bash
-docker.sh 16
+./docker.sh 16
 # or
-docker.sh 18
+./docker.sh 18
 ```
 
-A volume mapping makes the current working directory (containing the buildpack) available under `/app` in the container. So, you can run the buildpack with:
+A volume mapping makes the current working directory (containing the buildpack) available under `/app` in the container.
+
+So, inside the container, you can run the `compile` script of the buildpack with:
 
 ```bash
 cd /app
 bin/compile
 ```
 
-You can then also source the `.profile.d` script to complete the setup:
+Since the base directory is `/app` (like on a production dyno), you can also source the `.profile.d` script:
 
 ```bash
-. .profile.d/graphviz.sh
+source .profile.d/graphviz.sh
 ```
 
 The `example.gv` file contains an example Graphviz graph which allows to test the Graphviz installation:
