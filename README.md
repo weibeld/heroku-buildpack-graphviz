@@ -41,6 +41,8 @@ After running the buildpack, you can verify the installation of Graphviz with:
 ```bash
 heroku run dot -V
 ```
+> PS: Make sure to deploy at least once after you have added this `buildpack`.  
+You can verify the addition by running `heroku buildpacks`
 
 ## Develop
 
