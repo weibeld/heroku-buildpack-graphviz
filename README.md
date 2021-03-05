@@ -4,7 +4,7 @@ Install [Graphviz](http://www.graphviz.org/) on Heroku.
 
 ## Description
 
-This buildpack installs Graphviz on and makes it available to your Heroku application.
+This buildpack installs Graphviz on Heroku and makes it available to your Heroku application.
 
 The installed version of Graphviz is:
 
@@ -34,15 +34,19 @@ Or set the buildpack as the only buildpack:
 heroku buildpacks:set https://github.com/weibeld/heroku-buildpack-graphviz
 ```
 
+You can verify the addition of the buildpack with:
+
+```bash
+heroku buildpacks
+```
+
 ## Verify
 
-After running the buildpack, you can verify the installation of Graphviz with:
+After deploying your application with the buildpack at least once, you can verify the installation of Graphviz with:
 
 ```bash
 heroku run dot -V
 ```
-> PS: Make sure to deploy at least once after you have added this `buildpack`.  
-You can verify the addition by running `heroku buildpacks`
 
 ## Develop
 
