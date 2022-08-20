@@ -14,17 +14,15 @@ The required packages include not only [`graphviz`](https://packages.ubuntu.com/
 
 This can quickly get complicated, so the best way is to let `apt-get` figure out the concrete set of packages to install for a specific Heroku stack.
 
-To do so, run a specific Heroku stack as a Docker container:
+To do so for a specific Heroku stack, run a Docker container of the stack as follows:
 
 ```bash
-docker run --rm -it heroku/heroku:18
-# or
-docker run --rm -it heroku/heroku:20
-# or
-docker run --rm -it heroku/heroku:22
+docker run --rm -it heroku/heroku:<STACK>
 ```
 
-> The build happens on the same stack that will also be used during production.
+In the above command, replace `<STACK>` with the number of the desired [Heroku stack](https://devcenter.heroku.com/articles/stack), i.e. **18**, **20**, or **22**.
+
+> Important: only use a runtime image for this step and not a build image (e.g. [`heroku/heroku:22`](https://hub.docker.com/layers/heroku/heroku/heroku/22/images/sha256-025817fa6ae4af91990575f23f6b9a17d3e1573783a06cb0d09e6ad5f6755bab?context=explore) instead of [heroku/heroku:22-build](https://hub.docker.com/layers/heroku/heroku/heroku/22-build/images/sha256-b5623fc33ddb758010a1e5819a1ed231eed1a61844971f36e13910aac6d1eb61?context=explore)). This is because a build stack may already contain some of the dependent packages which would then miss on the runtime stack (see [here](https://devcenter.heroku.com/articles/stack-packages)).
 
 Then, in the Docker container, run:
 
@@ -33,7 +31,7 @@ apt-get update
 apt-get install -y --print-uris graphviz | grep http | awk '{print $1}' | tr -d "'"
 ```
 
-This prints the list of packages (more precisely, their URLs) that `apt-get install graphviz` would install on this specific system.
+This prints the URLs of the packages that `apt-get install graphviz` would install on this specific system.
 
 This list can then be used in the `bin/compile` script for the corresponding Heroku stack.
 
@@ -41,35 +39,46 @@ By installing precisely this set of packages, as figured out by `apt-get`, the e
 
 ## Testing
 
-The buildpack can be tested in a Docker container running a specific Heroku stack.
+The buildpack can be tested in a Docker container for each supported Heroku stack as follows.
 
-The `docker.sh` script allows to start such a Docker container:
+First, start the container by running the following command from the root directory of the repository:
 
 ```bash
-./docker.sh 18
-# or
-./docker.sh 20
-# or
-./docker.sh 22
+docker run -ti --rm -v "$PWD":/app -e STACK=heroku-<STACK> heroku/heroku:<STACK>
 ```
 
-A volume mapping makes the current working directory (containing the buildpack) available under `/app` in the container.
+In the above command, replace `<STACK>` with the number of the desired [Heroku stack](https://devcenter.heroku.com/articles/stack), i.e. **18**, **20**, or **22**.
 
-So, inside the container, you can run the `compile` script of the buildpack with:
+> The `-v` option in the above command the mounts content of the current working directory (which must be the repo root directory) as a volume in the `/app` directory inside the container.
+
+Then, within the container, change into the `/app` directory:
 
 ```bash
 cd /app
+```
+
+And you can then run the `compile` script as follows:
+
+```bash
 bin/compile
 ```
 
-Since the base directory is `/app` (like on a production dyno), you can also source the `.profile.d` script:
+Since your current working directory is `/app` (like on a production dyno), you can also source the `.profile.d` script, which adds the Graphviz installation directory to the `PATH`:
 
 ```bash
-source .profile.d/graphviz.sh
+. .profile.d/graphviz.sh
 ```
 
-The `example.gv` file contains an example Graphviz graph which allows to test the Graphviz installation:
+And you can then test the installation of Graphviz as follows:
+
+```bash
+dot -V
+```
+
+The `example.gv` file in the repository contains an example Graphviz graph which allows to further test the correct functioning of Graphviz:
 
 ```bash
 dot -Tpng example.gv >example.png
 ```
+
+Since the resulting `example.png` file is created in the Docker volume, it is automatically mapped back to your host system, that is, it will be created in the repo root directory on your host system.
