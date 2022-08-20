@@ -24,6 +24,27 @@ cd "$1"
 
 # URLs of the Ubuntu packages to install (see NOTES.md for how to obtain them)
 case "$STACK" in
+  heroku-22)
+    # See https://packages.ubuntu.com/focal/graphviz
+    package_urls=(http://archive.ubuntu.com/ubuntu/pool/main/f/fonts-liberation/fonts-liberation_1.07.4-11_all.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/a/ann/libann0_1.1.2%2bdoc-7build1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libcdt5_2.42.2-6_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libcgraph6_2.42.2-6_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/gts/libgts-0.7-5_0.7.6%2bdarcs121130-5_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libpathplan4_2.42.2-6_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libgvc6_2.42.2-6_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/libgvpr2_2.42.2-6_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/liblab-gamut1_2.42.2-6_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/x/xorg/x11-common_7.7%2b23ubuntu2_all.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libi/libice/libice6_1.0.10-1build2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libs/libsm/libsm6_1.2.3-1build2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxt/libxt6_1.2.1-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxmu/libxmu6_1.1.3-3_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libx/libxaw/libxaw7_1.0.14-1_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/graphviz/graphviz_2.42.2-6_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/universe/g/gts/libgts-bin_0.7.6%2bdarcs121130-5_amd64.deb)
+    graphviz_version="2.42.2"
+    ;;
   heroku-20)
     # See https://packages.ubuntu.com/focal/graphviz
     package_urls=(http://archive.ubuntu.com/ubuntu/pool/main/f/fonts-liberation/fonts-liberation_1.07.4-11_all.deb
@@ -108,6 +129,8 @@ case "$STACK" in
   heroku-18)
     libs_dir=$install_dir/usr/lib/x86_64-linux-gnu ;;
   heroku-20)
+    libs_dir=$install_dir/usr/lib/x86_64-linux-gnu ;;
+  heroku-22)
     libs_dir=$install_dir/usr/lib/x86_64-linux-gnu ;;
 esac
 

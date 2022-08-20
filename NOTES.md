@@ -22,6 +22,8 @@ docker run --rm -it heroku/heroku:16
 docker run --rm -it heroku/heroku:18
 # or
 docker run --rm -it heroku/heroku:20
+# or
+docker run --rm -it heroku/heroku:22
 ```
 
 > The build happens on the same stack that will also be used during production.
@@ -51,6 +53,8 @@ The `docker.sh` script allows to start such a Docker container:
 ./docker.sh 18
 # or
 ./docker.sh 20
+# or
+./docker.sh 22
 ```
 
 A volume mapping makes the current working directory (containing the buildpack) available under `/app` in the container.
