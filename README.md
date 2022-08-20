@@ -20,7 +20,7 @@ The Graphviz executables are installed to the following directory:
 
 The above directory is added to the `PATH` environment variable, so Graphviz commands like `dot` and `neato` are directly available to your app without specifying their path.
 
-## Enable
+## Install
 
 For adding the buildpack in addition with other buildpacks, use:
 
