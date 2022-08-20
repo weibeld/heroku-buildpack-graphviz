@@ -48,6 +48,8 @@ After deploying your application with the buildpack at least once, you can verif
 heroku run dot -V
 ```
 
+The above command runs `dot -V` on the application dyno, that is, in the same environment in which your application is running. That means, if the above command succeeds, your application can use Graphviz commands such as `dot` in the same way.
+
 ## Develop
 
 For implementation notes, see [DEVELOPMENT.md](DEVELOPMENT.md).
