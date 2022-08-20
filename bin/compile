@@ -2,7 +2,7 @@
 #
 # Install Grapvhiz binaries in the application slug.
 #
-# See NOTES.md for explanations.
+# See DEVELOPMENT.md for explanations.
 #
 # ---
 #
@@ -22,7 +22,7 @@ i() { sed 's/^/       /'; }
 
 cd "$1"
 
-# URLs of the Ubuntu packages to install (see NOTES.md for how to obtain them)
+# URLs of the Ubuntu packages to install (see DEVELOPMENT.md for how to obtain them)
 case "$STACK" in
   heroku-22)
     # See https://packages.ubuntu.com/focal/graphviz

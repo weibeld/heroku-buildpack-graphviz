@@ -50,7 +50,7 @@ heroku run dot -V
 
 ## Develop
 
-For implementation notes, see [NOTES.md](NOTES.md).
+For implementation notes, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## License
 
