@@ -6,35 +6,35 @@ Install [Graphviz](http://www.graphviz.org/) on Heroku.
 
 This buildpack installs Graphviz on Heroku and makes it available to your Heroku application.
 
-The installed version of Graphviz is:
+The installed version of Graphviz depends on the Heroku stack, which is automatically detected:
 
-- [**Graphviz 2.42.2**](https://packages.ubuntu.com/jammy/graphviz) for the [Heroku-22 stack](https://devcenter.heroku.com/articles/heroku-22-stack)
-- [**Graphviz 2.42.2**](https://packages.ubuntu.com/focal/graphviz) for the [Heroku-20 stack](https://devcenter.heroku.com/articles/heroku-20-stack)
-- [**Graphviz 2.40.1**](https://packages.ubuntu.com/bionic/graphviz) for the [Heroku-18 stack](https://devcenter.heroku.com/articles/heroku-18-stack)
+- [Heroku-22](https://devcenter.heroku.com/articles/heroku-22-stack): [Graphviz 2.42.2](https://packages.ubuntu.com/jammy/graphviz)
+- [Heroku-20](https://devcenter.heroku.com/articles/heroku-20-stack): [Graphviz 2.42.2](https://packages.ubuntu.com/focal/graphviz)
+- [Heroku-18](https://devcenter.heroku.com/articles/heroku-18-stack): [Graphviz 2.40.1](https://packages.ubuntu.com/bionic/graphviz)
 
-The Graphviz executables are installed to the following directory (from where they are available to your app):
+The Graphviz executables are installed to the following directory:
 
 ```
 /app/.heroku-buildpack-graphviz/usr/bin
 ```
 
-The buildpack also adds this directory to the `PATH`, so your app can directly use the Graphviz executables (like `dot` and `neato`) as simple commands.
+The above directory is added to the `PATH` environment variable, so Graphviz commands like `dot` and `neato` are directly available to your app without specifying their path.
 
 ## Enable
 
-Add the buildpack in addition to other buildpacks:
+For adding the buildpack in addition with other buildpacks, use:
 
 ```bash
 heroku buildpacks:add https://github.com/weibeld/heroku-buildpack-graphviz
 ```
 
-Or set the buildpack as the only buildpack:
+For setting the buildpack as the only buildpack, use:
 
 ```bash
 heroku buildpacks:set https://github.com/weibeld/heroku-buildpack-graphviz
 ```
 
-You can verify the addition of the buildpack with:
+You can verify that the buildpack has been added with:
 
 ```bash
 heroku buildpacks
