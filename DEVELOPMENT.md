@@ -81,4 +81,4 @@ The `example.gv` file in the repository contains an example Graphviz graph which
 dot -Tpng example.gv >example.png
 ```
 
-Since the resulting `example.png` file is created in the Docker volume, it is automatically mapped back to your host system, that is, it will be created in the repo root directory on your host system.
+Since the resulting `example.png` file is created in `/app` directory which is a Docker volume, the file is automatically mapped back to your host system, that means, it will be available in the repository root directory.

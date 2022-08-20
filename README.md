@@ -6,11 +6,11 @@ Install [Graphviz](http://www.graphviz.org/) on Heroku.
 
 This buildpack installs Graphviz on Heroku and makes it available to your Heroku application.
 
-The installed version of Graphviz depends on the Heroku stack, which is automatically detected:
+The installed version of Graphviz depends on the Heroku stack (which is automatically detected by the buildpack):
 
-- [Heroku-22](https://devcenter.heroku.com/articles/heroku-22-stack): [Graphviz 2.42.2](https://packages.ubuntu.com/jammy/graphviz)
-- [Heroku-20](https://devcenter.heroku.com/articles/heroku-20-stack): [Graphviz 2.42.2](https://packages.ubuntu.com/focal/graphviz)
-- [Heroku-18](https://devcenter.heroku.com/articles/heroku-18-stack): [Graphviz 2.40.1](https://packages.ubuntu.com/bionic/graphviz)
+- [Heroku-22](https://devcenter.heroku.com/articles/heroku-22-stack) → [Graphviz 2.42.2](https://packages.ubuntu.com/jammy/graphviz)
+- [Heroku-20](https://devcenter.heroku.com/articles/heroku-20-stack) → [Graphviz 2.42.2](https://packages.ubuntu.com/focal/graphviz)
+- [Heroku-18](https://devcenter.heroku.com/articles/heroku-18-stack) → [Graphviz 2.40.1](https://packages.ubuntu.com/bionic/graphviz)
 
 The Graphviz executables are installed to the following directory:
 
