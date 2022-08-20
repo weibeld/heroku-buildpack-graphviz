@@ -17,8 +17,6 @@ This can quickly get complicated, so the best way is to let `apt-get` figure out
 To do so, run a specific Heroku stack as a Docker container:
 
 ```bash
-docker run --rm -it heroku/heroku:16
-# or
 docker run --rm -it heroku/heroku:18
 # or
 docker run --rm -it heroku/heroku:20
@@ -48,8 +46,6 @@ The buildpack can be tested in a Docker container running a specific Heroku stac
 The `docker.sh` script allows to start such a Docker container:
 
 ```bash
-./docker.sh 16
-# or
 ./docker.sh 18
 # or
 ./docker.sh 20
